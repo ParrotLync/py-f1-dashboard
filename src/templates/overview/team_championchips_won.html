@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        {% include "partials/title-meta.html" %}
+        {% include "partials/head-css.html" %}
+
+        <!-- DataTables -->
+        <link href="/static/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+        <link href="/static/libs/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+    </head>
+
+    <body data-topbar="dark" data-layout="horizontal">
+        <!-- Begin page -->
+        <div id="layout-wrapper">
+            {% include "partials/horizontal.html" %}
+            <div class="main-content">
+                <div class="page-content">
+                    <div class="container-fluid">
+                        {% include "partials/page-title.html" %}
+
+                        <div class="card">
+                            <div class="card-body">
+                                <table id="datatable" class="table table-hover">
+                                    <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Team</th>
+                                        <th>Code</th>
+                                        <th>Kampioenschappen gewonnen</th>
+                                    </tr>
+                                    </thead>
+
+                                    <tbody>
+                                    {% for i, team in teams.iterrows() %}
+                                    <tr>
+                                        <td>{{ i + 1 }}</td>
+                                        <td><a href="#">{{ team.TeamName }}</a></td>
+                                        <td><code>{{ team.constructorRef }}</code></td>
+                                        <td>{{ team.TotalWins }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div> <!-- container-fluid -->
+                </div>
+                <!-- End Page-content -->
+                {% include "partials/footer.html" %}
+            </div>
+            <!-- end main content-->
+        </div>
+        <!-- END layout-wrapper -->
+        {% include "partials/right-sidebar.html" %}
+        {% include "partials/vendor-scripts.html" %}
+
+        <script src="/static/libs/datatables.net/js/jquery.dataTables.min.js"></script>
+        <script src="/static/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
+        <script>
+            $('#datatable').DataTable();
+        </script>
+    </body>
+</html>

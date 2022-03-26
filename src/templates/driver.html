@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        {% include "partials/title-meta.html" %}
+        {% include "partials/head-css.html" %}
+
+        <!-- DataTables -->
+        <link href="/static/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+        <link href="/static/libs/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+    </head>
+    <body data-topbar="dark" data-layout="horizontal">
+        <!-- Begin page -->
+        <div id="layout-wrapper">
+            {% include "partials/horizontal.html" %}
+            <div class="main-content">
+                <div class="page-content">
+                    <div class="container-fluid">
+                       {% include "partials/page-title.html" %}
+
+                       <div class="row">
+                            <div class="col-xl-4">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h4 class="card-title mb-4">Informatie</h4>
+                                        <div class="table-responsive">
+                                            <table class="table mb-0">
+                                                <tbody>
+                                                    <tr>
+                                                        <th scope="row">Naam</th>
+                                                        <td>{{ driver.forename }} {{ driver.surname }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th scope="row">Code</th>
+                                                        <td>{{ driver.code }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th scope="row">Nummer</th>
+                                                        <td>{{ driver.number|int }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th scope="row">Nationaliteit</th>
+                                                        <td>{{ driver.nationality }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th scope="row">Geboortedatum</th>
+                                                        <td>{{ driver.dob }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th scope="row">URL</th>
+                                                        <td><a href="{{ driver.url }}" target="_blank">{{ driver.url }}</a></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- end card -->
+                            </div>
+
+                            <div class="col-xl-8">
+
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="card mini-stats-wid">
+                                            <div class="card-body">
+                                                <div class="d-flex">
+                                                    <div class="flex-grow-1">
+                                                        <p class="text-muted fw-medium mb-2">Races gereden</p>
+                                                        <h4 class="mb-0">{{ num_races }}</h4>
+                                                    </div>
+
+                                                    <div class="flex-shrink-0 align-self-center">
+                                                        <div class="mini-stat-icon avatar-sm rounded-circle bg-primary">
+                                                            <span class="avatar-title">
+                                                                <i class="bx bx-car font-size-24"></i>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="card mini-stats-wid">
+                                            <div class="card-body">
+                                                <div class="d-flex">
+                                                    <div class="flex-grow-1">
+                                                        <p class="text-muted fw-medium mb-2">Races gewonnen</p>
+                                                        <h4 class="mb-0">{{ num_won }}</h4>
+                                                    </div>
+
+                                                    <div class="flex-shrink-0 align-self-center">
+                                                        <div class="avatar-sm mini-stat-icon rounded-circle bg-primary">
+                                                            <span class="avatar-title">
+                                                                <i class="bx bx-star font-size-24"></i>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="card mini-stats-wid">
+                                            <div class="card-body">
+                                                <div class="d-flex">
+                                                    <div class="flex-grow-1">
+                                                        <p class="text-muted fw-medium mb-2">Races in top 3</p>
+                                                        <h4 class="mb-0">{{ num_top3 }}</h4>
+                                                    </div>
+
+                                                    <div class="flex-shrink-0 align-self-center">
+                                                        <div class="avatar-sm mini-stat-icon rounded-circle bg-primary">
+                                                            <span class="avatar-title">
+                                                                <i class="bx bx-stats font-size-24"></i>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h4 class="card-title mb-4">Resultaten</h4>
+                                        <div class="table-responsive">
+                                            <table id="results_table" class="table table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Positie</th>
+                                                        <th>Punten</th>
+                                                        <th>Jaar</th>
+                                                        <th>Race</th>
+                                                        <th>Team</th>
+                                                        <th>Laps</th>
+                                                        <th>Tijd</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for i, row in results.iterrows() %}
+                                                    <tr>
+                                                        <td>{{ "-" if row.position|int == 0 else row.position|int }}</td>
+                                                        <td>{{ row.points|int }}</td>
+                                                        <td>{{ row.year }}</td>
+                                                        <td>{{ row.RaceName }}</td>
+                                                        <td>{{ row.TeamName }}</td>
+                                                        <td>{{ row.laps }}</td>
+                                                        <td>{{ "-" if row.time == None else row.time }}</td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- end row -->
+                    </div> <!-- container-fluid -->
+                </div>
+                <!-- End Page-content -->
+                {% include "partials/footer.html" %}
+            </div>
+            <!-- end main content-->
+        </div>
+        <!-- END layout-wrapper -->
+        {% include "partials/right-sidebar.html" %}
+        {% include "partials/vendor-scripts.html" %}
+
+        <script src="/static/libs/datatables.net/js/jquery.dataTables.min.js"></script>
+        <script src="/static/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
+        <script>
+            $('#results_table').DataTable();
+        </script>
+    </body>
+</html>

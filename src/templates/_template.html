@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        {% include "partials/title-meta.html" %}
+        {% include "partials/head-css.html" %}
+    </head>
+
+    <body data-topbar="dark" data-layout="horizontal">
+        <!-- Begin page -->
+        <div id="layout-wrapper">
+            {% include "partials/horizontal.html" %}
+            <div class="main-content">
+                <div class="page-content">
+                    <div class="container-fluid">
+                        {% include "partials/page-title.html" %}
+
+
+                    </div> <!-- container-fluid -->
+                </div>
+                <!-- End Page-content -->
+                {% include "partials/footer.html" %}
+            </div>
+            <!-- end main content-->
+        </div>
+        <!-- END layout-wrapper -->
+        {% include "partials/right-sidebar.html" %}
+        {% include "partials/vendor-scripts.html" %}
+        <script src="static/js/app.js"></script>
+    </body>
+</html>

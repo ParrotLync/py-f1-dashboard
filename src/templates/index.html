@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        {% include "partials/title-meta.html" %}
+        {% include "partials/head-css.html" %}
+    </head>
+
+    <body data-topbar="dark" data-layout="horizontal">
+        <!-- Begin page -->
+        <div id="layout-wrapper">
+            {% include "partials/horizontal.html" %}
+            <div class="main-content">
+                <div class="page-content">
+                    <div class="container-fluid">
+                        {% include "partials/page-title.html" %}
+                        Deze tool is geschreven als casus voor B2C3 Machine Learning, en kan gebruikt worden om structurele en voorspellende data in te zien voor
+                        een op Formule 1 gebaseerde dataset (<a href="https://www.kaggle.com/datasets/rohanrao/formula-1-world-championship-1950-2020" target="_blank">formula-1-world-championship-1950-2020</a>).
+                        <br>
+                        De source code van deze tool is vrij beschikbaar gesteld onder de MIT license op <a href="https://github.com/ParrotLync/py-f1-dashboard" target="_blank">GitHub</a> (Python & Flask).
+
+                        <br><br><br>
+
+                        <h6>Geïmplementeerde views</h6>
+                        <a href="/scores/totals">/scores/totals</a> - Bekijk totaal aantal punten voor elke coureur<br>
+                        <a href="/teams/stats/races">/teams/stats/races</a> - Bekijk het totaal aantal gewonnen races per team<br>
+                        <a href="/drivers">/drivers</a>/&lt;id&gt; - Overzicht van coureurs<br>
+                    </div> <!-- container-fluid -->
+                </div>
+                <!-- End Page-content -->
+                {% include "partials/footer.html" %}
+            </div>
+            <!-- end main content-->
+        </div>
+        <!-- END layout-wrapper -->
+        {% include "partials/right-sidebar.html" %}
+        {% include "partials/vendor-scripts.html" %}
+        <script src="static/js/app.js"></script>
+    </body>
+</html>
