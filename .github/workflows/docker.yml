@@ -11,6 +11,9 @@ env:
 jobs:
   build-and-push-image:
     runs-on: ubuntu-latest
+    environment: 
+      name: production
+      url: https://f1predictions.ipictserver.nl
     permissions:
       contents: read
       packages: write
