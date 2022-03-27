@@ -1,22 +1,16 @@
 import pandas as pd
-import seaborn as sns
-import matplotlib.pyplot as plt
-import numpy as np
-from sklearn.model_selection import train_test_split
-import warnings
 
-from sklearn.linear_model import LogisticRegression
+from sklearn.linear_model import LogisticRegression, LinearRegression
+from sklearn.pipeline import make_pipeline
+from sklearn.svm import SVR
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.naive_bayes import GaussianNB
 from sklearn.linear_model import SGDClassifier
-from sklearn.metrics import accuracy_score
-from sklearn.metrics import confusion_matrix
-from sklearn.metrics import classification_report
 
 
-from sklearn.preprocessing import RobustScaler
+from sklearn.preprocessing import RobustScaler, StandardScaler, MinMaxScaler
 from sklearn.preprocessing import LabelEncoder
 from sklearn import tree
 
@@ -25,6 +19,8 @@ from datetime import datetime
 
 
 # Load data
+from src.utils import get_df
+
 data = DataConnector()
 
 
@@ -101,13 +97,16 @@ df = df[~((df < (Q1 - 1.5 * IQR)) | (df > (Q3 + 1.5 * IQR))).any(axis=1)]
 
 
 # Label encoding
-le = LabelEncoder()
+encoders = {}
+encoder = LabelEncoder()
 for i in categorical:
-    df[i] = le.fit_transform(df[i])
+    encoder = LabelEncoder()
+    encoders[i] = encoder
+    df[i] = encoder.fit_transform(df[i])
+    print(list(encoder.classes_))
 
 x = df.drop('driverName', axis=1)
 y = df.driverName
-x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.3, random_state=42)
 
 
 # Modelling
@@ -118,15 +117,57 @@ knn = KNeighborsClassifier()
 gb = GaussianNB()
 sgd = SGDClassifier()
 
-scaler = RobustScaler().fit(x_train)
-x_train_scaled = scaler.transform(x_train)
-x_test_scaled = scaler.transform(x_test)
+# scaler = RobustScaler().fit(x[["year", "circuitId", "grandPrix", "position"]])
+# x_scaled = scaler.transform(x[["year", "circuitId", "grandPrix", "position"]])
 
-models = [lr, sgd, knn, gb, rn, dt]
-scores = {}
-for i in models:
-    i.fit(x_train_scaled, y_train)
-    y_prediction = i.predict(x_test_scaled)
-    print(f"Prediction: {y_prediction} | Test: {y_test}")
-    print(f"{i}: {accuracy_score(y_prediction, y_test) * 100}")
-    scores.update({str(i): i.score(x_test_scaled, y_test) * 100})
+x = x[["year", "circuitId", "grandPrix", "position"]]
+# scaler = StandardScaler()
+# scaler.fit(x)
+# x = scaler.transform(x)
+
+selected_model = rn
+
+selected_model.fit(x, y)
+
+prediction_df = pd.DataFrame()
+data_df = get_df("""
+SELECT races.year, races.circuitId, races.name, drivers.forename, drivers.surname
+FROM drivers, results, races
+WHERE results.driverId = drivers.driverId AND results.raceId = races.raceId AND races.year >= 2012 AND results.position = 1
+""")
+for i, row in data_df.iterrows():
+    try:
+        print([[row['year'], row['circuitId'], encoders['grandPrix'].transform([row['name']]), 1]])
+        pred = selected_model.predict(
+            [[row['year'], row['circuitId'], encoders['grandPrix'].transform([row['name']]), 1]])
+    except:
+        continue
+
+    try:
+        pred_name = encoders['driverName'].inverse_transform(pred)
+    except:
+        pred_name = "-"
+
+    df_row = pd.DataFrame({
+        'year': row['year'],
+        'circuitId': row['circuitId'],
+        'grandPrix': row['name'],
+        'prediction_val': pred,
+        'prediction': pred_name,
+        'real': row['forename'] + ' ' + row['surname']
+    })
+
+    prediction_df = pd.concat([prediction_df, df_row], ignore_index=True, axis=0)
+
+prediction_df.to_csv('predictions.csv')
+
+
+# models = [lr, sgd, knn, gb, rn, dt]
+# scores = {}
+# for i in models:
+#     i.fit(x_train_scaled, y_train)
+#     y_prediction = i.predict(x_test_scaled)
+#     print(f"Prediction: {y_prediction} | Test: {y_test}")
+#     print(encoder.inverse_transform([y_prediction[0]]))
+#     print(f"{i}: {accuracy_score(y_prediction, y_test) * 100}")
+#     scores.update({str(i): i.score(x_test_scaled, y_test) * 100})
