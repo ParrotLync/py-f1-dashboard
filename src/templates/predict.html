@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        {% include "partials/title-meta.html" %}
+        {% include "partials/head-css.html" %}
+    </head>
+
+    <body data-topbar="dark" data-layout="horizontal">
+        <!-- Begin page -->
+        <div id="layout-wrapper">
+            {% include "partials/horizontal.html" %}
+            <div class="main-content">
+                <div class="page-content">
+                    <div class="container-fluid">
+                        {% include "partials/page-title.html" %}
+
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h4 class="card-title mb-4">Nieuwe voorspelling</h4>
+
+                                        <form class="row row-cols-lg-auto g-3 align-items-center">
+                                            <div class="col-12">
+                                                <label class="visually-hidden" for="year">Year</label>
+                                                <select class="form-select" id="year" name="year">
+                                                    {% for i in year_list %}
+                                                    <option value="{{ i[0] }}" {{ 'selected' if request.args.get('year')|int == i[0]|int }}>{{ i[0] }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+
+                                            <div class="col-12">
+                                                <label class="visually-hidden" for="grandPrix">Grand Prix</label>
+                                                <select class="form-select" id="grandPrix" name="grandPrix">
+                                                    {% for i in grand_prix_list %}
+                                                    <option value="{{ i[0] }}" {{ 'selected' if request.args.get('grandPrix')|string == i[0]|string }}>{{ i[0] }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+
+                                            <div class="col-12">
+                                                <label class="visually-hidden" for="circuitId">Circuit</label>
+                                                <select class="form-select" id="circuitId" name="circuitId">
+                                                    {% for i, row in circuits.iterrows() %}
+                                                    <option value="{{ row.circuitId }}" {{ 'selected' if request.args.get('circuitId')|int == row.circuitId|int }}>{{ row.CircuitName }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+
+                                            <div class="col-12">
+                                                <button type="submit" class="btn btn-primary w-md">Voorspelling maken</button>
+                                            </div>
+                                        </form>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {% if result is not none %}
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="card-title mb-4">Resultaat</h4>
+                                De voorspelde winnaar van de ingegeven race is: <b>{{ result[0] }}</b>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div> <!-- container-fluid -->
+                </div>
+                <!-- End Page-content -->
+                {% include "partials/footer.html" %}
+            </div>
+            <!-- end main content-->
+        </div>
+        <!-- END layout-wrapper -->
+        {% include "partials/right-sidebar.html" %}
+        {% include "partials/vendor-scripts.html" %}
+    </body>
+</html>
