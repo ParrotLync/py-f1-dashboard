@@ -1,11 +1,15 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 from data import DataConnector
+from src.predictor import Predictor
 from utils import *
 
 app = Flask(__name__)
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 data = DataConnector()
 data.init_db()
+
+predictor = Predictor()
+predictor.init()
 
 
 @app.route('/')
@@ -55,6 +59,18 @@ def driver(driver_id: int):
         WHERE driverId = ? AND results.raceId = races.raceId AND results.constructorId = constructors.constructorId
     """, driver_id)
     return render_template("driver.html", page_title="Coureur", driver=driver_result.iloc[0], num_races=num_races[0][0], num_won=num_won[0][0], num_top3=num_top3[0][0], results=results)
+
+
+@app.route('/prediction')
+def predict():
+    result = None
+    if ('year' in request.args) and ('circuitId' in request.args) and ('grandPrix' in request.args):
+        result = predictor.predict(request.args.get('year'), request.args.get('circuitId'), request.args.get('grandPrix'))
+
+    grand_prix_list = get_result("SELECT DISTINCT name FROM races")
+    year_list = get_result("SELECT DISTINCT year FROM races")
+    circuits = get_df("SELECT DISTINCT circuitId, name as CircuitName FROM circuits")
+    return render_template("predict.html", page_title="Voorspellen", grand_prix_list=grand_prix_list, year_list=year_list, circuits=circuits, result=result)
 
 
 if __name__ == '__main__':
