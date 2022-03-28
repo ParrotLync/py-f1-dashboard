@@ -4,7 +4,7 @@ import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import LabelEncoder
 
-from src.data import DataConnector
+from data import DataConnector
 
 
 class Predictor:

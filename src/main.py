@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request
 from data import DataConnector
-from src.predictor import Predictor
+from predictor import Predictor
 from utils import *
 
 app = Flask(__name__)
